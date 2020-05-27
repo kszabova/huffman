@@ -42,6 +42,6 @@ makeTree :: CharWeights -> Node
 makeTree = makeTree' . convert . sorted
     where makeTree' [n] = n
           makeTree' (n1:n2:ns)
-            = makeTree' $ List.insert (Inner n1 n2 $ weight n1 + weight n2) ns
+            = makeTree' $ List.insert (merge n1 n2) ns
 
           convert = foldr (\(c, w) cs -> Leaf c w : cs) []
