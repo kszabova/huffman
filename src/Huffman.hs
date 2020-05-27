@@ -33,7 +33,7 @@ merge :: Node -> Node -> Node
 merge n1 n2 = Inner n1 n2 (weight n1 + weight n2)
 
 getFreqList :: String -> CharWeights
-getFreqList s = Map.toList $ updateFreqs s (Map.fromList [])
+getFreqList s = Map.toList $ updateFreqs s $ Map.fromList []
     where updateFreqs "" l     = l
           updateFreqs (c:cs) l = updateFreqs cs $ Map.insertWith (+) c 1 l
 
@@ -52,4 +52,4 @@ getCharEncoding :: Node -> Map.Map Char [Bit]
 getCharEncoding t = Map.fromList $ getCharEncoding' t []
     where getCharEncoding' (Leaf c _) bits = [(c, bits)]
           getCharEncoding' (Inner n1 n2 _) bits
-            = (getCharEncoding' n1 (bits ++ [Zero])) ++ (getCharEncoding' n2 (bits ++ [One]))
+            = (getCharEncoding' n1 $ bits ++ [Zero]) ++ (getCharEncoding' n2 $ bits ++ [One])
