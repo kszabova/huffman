@@ -38,7 +38,7 @@ getFreqList s = Map.toList $ updateFreqs s $ Map.fromList []
           updateFreqs (c:cs) l = updateFreqs cs $ Map.insertWith (+) c 1 l
 
 sorted :: CharWeights -> CharWeights
-sorted weights = List.sortBy (compare `on` snd) weights
+sorted = List.sortBy (compare `on` snd)
 
 makeTree :: CharWeights -> Node
 makeTree = makeTree' . convert . sorted
@@ -48,8 +48,8 @@ makeTree = makeTree' . convert . sorted
 
           convert = foldr (\(c, w) cs -> Leaf c w : cs) []
 
-getCharEncoding :: Node -> Map.Map Char [Bit]
-getCharEncoding t = Map.fromList $ getCharEncoding' t []
-    where getCharEncoding' (Leaf c _) bits = [(c, bits)]
-          getCharEncoding' (Inner n1 n2 _) bits
-            = (getCharEncoding' n1 $ bits ++ [Zero]) ++ (getCharEncoding' n2 $ bits ++ [One])
+getEncodings :: Node -> Map.Map Char [Bit]
+getEncodings t = Map.fromList $ getEncodings' t []
+    where getEncodings' (Leaf c _) bits = [(c, bits)]
+          getEncodings' (Inner n1 n2 _) bits
+            = (getEncodings' n1 $ bits ++ [Zero]) ++ (getEncodings' n2 $ bits ++ [One])
