@@ -23,6 +23,8 @@ instance Ord Node where
 
 type CharWeights = [(Char, Int)]
 
+data Bit = Zero | One deriving (Eq, Show)
+
 weight :: Node -> Int
 weight (Leaf _ w)    = w
 weight (Inner _ _ w) = w
@@ -45,3 +47,9 @@ makeTree = makeTree' . convert . sorted
             = makeTree' $ List.insert (merge n1 n2) ns
 
           convert = foldr (\(c, w) cs -> Leaf c w : cs) []
+
+getCharEncoding :: Node -> Map.Map Char [Bit]
+getCharEncoding t = Map.fromList $ getCharEncoding' t []
+    where getCharEncoding' (Leaf c _) bits = [(c, bits)]
+          getCharEncoding' (Inner n1 n2 _) bits
+            = (getCharEncoding' n1 (bits ++ [Zero])) ++ (getCharEncoding' n2 (bits ++ [One]))
