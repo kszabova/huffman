@@ -1,5 +1,7 @@
 module Huffman where
 
+import qualified Data.Map as Map
+
 data Node = Leaf Char Int
           | Inner Node Node Int
           deriving (Eq, Show)
@@ -23,3 +25,8 @@ weight (Inner _ _ w) = w
 
 merge :: Node -> Node -> Node
 merge n1 n2 = Inner n1 n2 (weight n1 + weight n2)
+
+getFreqList :: String -> [(Char, Int)]
+getFreqList s = Map.toList $ updateFreqs s (Map.fromList [])
+    where updateFreqs "" l     = l
+          updateFreqs (c:cs) l = updateFreqs cs $ Map.insertWith (+) c 1 l
