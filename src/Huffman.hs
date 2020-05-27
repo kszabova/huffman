@@ -1,6 +1,8 @@
 module Huffman where
 
 import qualified Data.Map as Map
+import qualified Data.List as List
+import Data.Function
 
 data Node = Leaf Char Int
           | Inner Node Node Int
@@ -19,6 +21,8 @@ instance Ord Node where
     compare (Inner _ _ w1) (Inner _ _ w2)
         = compare w1 w2
 
+type CharWeights = [(Char, Int)]
+
 weight :: Node -> Int
 weight (Leaf _ w)    = w
 weight (Inner _ _ w) = w
@@ -26,7 +30,18 @@ weight (Inner _ _ w) = w
 merge :: Node -> Node -> Node
 merge n1 n2 = Inner n1 n2 (weight n1 + weight n2)
 
-getFreqList :: String -> [(Char, Int)]
+getFreqList :: String -> CharWeights
 getFreqList s = Map.toList $ updateFreqs s (Map.fromList [])
     where updateFreqs "" l     = l
           updateFreqs (c:cs) l = updateFreqs cs $ Map.insertWith (+) c 1 l
+
+sorted :: CharWeights -> CharWeights
+sorted weights = List.sortBy (compare `on` snd) weights
+
+makeTree :: CharWeights -> Node
+makeTree = makeTree' . convert . sorted
+    where makeTree' [n] = n
+          makeTree' (n1:n2:ns)
+            = makeTree' $ List.insert (Inner n1 n2 $ weight n1 + weight n2) ns
+
+          convert = foldr (\(c, w) cs -> Leaf c w : cs) []
