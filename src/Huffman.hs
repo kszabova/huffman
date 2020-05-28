@@ -53,3 +53,12 @@ getEncodings t = Map.fromList $ getEncodings' t []
     where getEncodings' (Leaf c _) bits = [(c, bits)]
           getEncodings' (Inner n1 n2 _) bits
             = (getEncodings' n1 $ bits ++ [Zero]) ++ (getEncodings' n2 $ bits ++ [One])
+
+getString :: Node -> [Bit] -> String
+getString tree bits = getString' tree tree bits ""
+    where getString' _ (Leaf c _) [] s = s ++ [c]
+          getString' _ _ [] s = s
+          getString' r (Leaf c _) b s = getString' r r b (s ++ [c])
+          getString' r (Inner left right _) (b:bs) s
+            | b == Zero = getString' r left bs s
+            | otherwise = getString' r right bs s
