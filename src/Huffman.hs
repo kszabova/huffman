@@ -54,6 +54,10 @@ getEncodings t = Map.fromList $ getEncodings' t []
           getEncodings' (Inner n1 n2 _) bits
             = (getEncodings' n1 $ bits ++ [Zero]) ++ (getEncodings' n2 $ bits ++ [One])
 
+getBits :: Node -> String -> [Bit]
+getBits t = concat . map (\c -> encodings Map.! c)
+    where encodings = getEncodings t
+
 getString :: Node -> [Bit] -> String
 getString tree bits = getString' tree tree bits ""
     where getString' _ (Leaf c _) [] s = s ++ [c]
