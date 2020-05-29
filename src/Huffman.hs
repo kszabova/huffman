@@ -5,10 +5,8 @@ import qualified Data.List       as List
 import qualified Data.ByteString as BS
 
 import Data.Function
-import Data.Char
 import Data.Word
 
-import qualified GHC.IO.Encoding as Encoding
 
 -- Data definitions
 type CharWeights = [(Char, Int)]
