@@ -124,3 +124,11 @@ encode file = do
     let encoded = bitstreamToByteString $ getBits tree text
     writeFile (file ++ ".tree") (show tree)
     BS.writeFile (file ++ ".out") encoded
+
+decode :: String -> String -> IO ()
+decode file treeFile = do
+    tree' <- readFile treeFile
+    let tree = read tree'::Node
+    text <- BS.readFile file
+    let decoded = getString tree $ concat $ map wordToBits $ BS.unpack text
+    putStr decoded
