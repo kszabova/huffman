@@ -2,12 +2,15 @@ module Huffman where
 
 import qualified Data.Map as Map
 import qualified Data.List as List
+import qualified Data.ByteString as BS
 import Data.Function
 import Data.Char
+import qualified GHC.IO.Encoding as Encoding
+import Data.Word
 
 data Node = Leaf Char Int
           | Inner Node Node Int
-          deriving (Eq, Show)
+          deriving (Eq, Show, Read)
 
 instance Ord Node where
     compare (Leaf c1 w1) (Leaf c2 w2)
@@ -25,6 +28,9 @@ instance Ord Node where
 type CharWeights = [(Char, Int)]
 
 data Bit = Zero | One deriving (Eq, Show)
+
+charSize :: Int
+charSize = 8
 
 weight :: Node -> Int
 weight (Leaf _ w)    = w
@@ -68,6 +74,13 @@ getString tree bits = getString' tree tree bits ""
             | b == Zero = getString' r left bs s
             | otherwise = getString' r right bs s
 
+bitsToWord :: [Bit] -> Word8
+bitsToWord byte = bitsToWord' byte 0
+    where bitsToWord' [] acc = acc
+          bitsToWord' (b:bs) acc
+            | b == Zero = bitsToWord' bs (2*acc)
+            | otherwise = bitsToWord' bs (2*acc + 1)
+
 bitsToChar :: [Bit] -> Char
 bitsToChar byte = chr $ bitsToChar' byte 0
     where bitsToChar' [] acc = acc
@@ -75,19 +88,26 @@ bitsToChar byte = chr $ bitsToChar' byte 0
             | b == Zero = bitsToChar' bs (2*acc)
             | otherwise = bitsToChar' bs (2*acc + 1)
 
+wordToBits :: Word8 -> [Bit]
+wordToBits word = wordToBits' word []
+    where wordToBits' 0 bits = replicate (charSize - length bits) Zero ++ bits
+          wordToBits' c bits
+            | c `mod` 2 == 0 = wordToBits' (c `div` 2) (Zero:bits)
+            | otherwise      = wordToBits' (c `div` 2) (One:bits)
+
 charToBits :: Char -> [Bit]
 charToBits char = charToBits' (ord char) []
-    where charToBits' 0 bits = replicate (16 - length bits) Zero ++ bits
+    where charToBits' 0 bits = replicate (charSize - length bits) Zero ++ bits
           charToBits' c bits
             | c `mod` 2 == 0 = charToBits' (c `div` 2) (Zero:bits)
             | otherwise      = charToBits' (c `div` 2) (One:bits)
 
-extendToMultipleOf16 :: [Bit] -> [Bit]
-extendToMultipleOf16 bits
-    | (length bits) `mod` 16 == 0 = bits
-    | otherwise = bits ++ replicate (16 - length bits `mod` 16) Zero
+extendToMultipleOfCharSize :: [Bit] -> [Bit]
+extendToMultipleOfCharSize bits
+    | (length bits) `mod` charSize == 0 = bits
+    | otherwise = bits ++ replicate (charSize - length bits `mod` charSize) Zero
 
 bitstreamToString :: [Bit] -> String
-bitstreamToString bits = bsts (extendToMultipleOf16 bits) ""
+bitstreamToString bits = bsts (extendToMultipleOfCharSize bits) ""
     where bsts [] s = s
-          bsts b s = bsts (drop 16 b) (s ++ [bitsToChar $ take 16 b])
+          bsts b s = bsts (drop charSize b) (s ++ [bitsToChar $ take charSize b])
