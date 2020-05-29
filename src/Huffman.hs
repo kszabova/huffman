@@ -3,6 +3,7 @@ module Huffman where
 import qualified Data.Map as Map
 import qualified Data.List as List
 import Data.Function
+import Data.Char
 
 data Node = Leaf Char Int
           | Inner Node Node Int
@@ -80,3 +81,13 @@ charToBits char = charToBits' (ord char) []
           charToBits' c bits
             | c `mod` 2 == 0 = charToBits' (c `div` 2) (Zero:bits)
             | otherwise      = charToBits' (c `div` 2) (One:bits)
+
+extendToMultipleOf16 :: [Bit] -> [Bit]
+extendToMultipleOf16 bits
+    | (length bits) `mod` 16 == 0 = bits
+    | otherwise = bits ++ replicate (16 - length bits `mod` 16) Zero
+
+bitstreamToString :: [Bit] -> String
+bitstreamToString bits = bsts (extendToMultipleOf16 bits) ""
+    where bsts [] s = s
+          bsts b s = bsts (drop 16 b) (s ++ [bitsToChar $ take 16 b])
