@@ -1,0 +1,20 @@
+name:                huffman
+version:             0.1.0.0
+synopsis:            File compression and decompression using Huffman encoding
+description:         Please see README.md
+homepage:            https://github.com/kszabova/huffman
+license:             BSD3
+license-file:        LICENSE
+author:              Kristina Szabova
+maintainer:          k.szabova98@gmail.com
+copyright:           2020, Kristina Szabova
+category:            Web
+build-type:          Simple
+cabal-version:       >=1.10
+extra-source-files:  README.md
+
+library
+    hs-source-dirs:     src
+    exposed-modules:    Huffman
+    build-depends:      base >= 4.7 && < 5
+    default-language:   Haskell2010

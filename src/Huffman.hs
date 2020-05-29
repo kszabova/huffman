@@ -1,13 +1,18 @@
-module Huffman where
+module Huffman (encode, decode) where
 
-import qualified Data.Map as Map
-import qualified Data.List as List
+import qualified Data.Map        as Map
+import qualified Data.List       as List
 import qualified Data.ByteString as BS
+
 import Data.Function
 import Data.Char
-import qualified GHC.IO.Encoding as Encoding
 import Data.Word
 
+import qualified GHC.IO.Encoding as Encoding
+
+-- Data definitions
+type CharWeights = [(Char, Int)]
+data Bit = Zero | One deriving (Eq, Show)
 data Node = Leaf Char Int
           | Inner Node Node Int
           deriving (Eq, Show, Read)
@@ -24,10 +29,6 @@ instance Ord Node where
         | otherwise = compare w1 w2
     compare (Inner _ _ w1) (Inner _ _ w2)
         = compare w1 w2
-
-type CharWeights = [(Char, Int)]
-
-data Bit = Zero | One deriving (Eq, Show)
 
 
 -- Constant storing the size of one word
