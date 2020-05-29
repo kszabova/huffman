@@ -66,3 +66,17 @@ getString tree bits = getString' tree tree bits ""
           getString' r (Inner left right _) (b:bs) s
             | b == Zero = getString' r left bs s
             | otherwise = getString' r right bs s
+
+bitsToChar :: [Bit] -> Char
+bitsToChar byte = chr $ bitsToChar' byte 0
+    where bitsToChar' [] acc = acc
+          bitsToChar' (b:bs) acc
+            | b == Zero = bitsToChar' bs (2*acc)
+            | otherwise = bitsToChar' bs (2*acc + 1)
+
+charToBits :: Char -> [Bit]
+charToBits char = charToBits' (ord char) []
+    where charToBits' 0 bits = replicate (16 - length bits) Zero ++ bits
+          charToBits' c bits
+            | c `mod` 2 == 0 = charToBits' (c `div` 2) (Zero:bits)
+            | otherwise      = charToBits' (c `div` 2) (One:bits)
