@@ -111,3 +111,8 @@ bitstreamToString :: [Bit] -> String
 bitstreamToString bits = bsts (extendToMultipleOfCharSize bits) ""
     where bsts [] s = s
           bsts b s = bsts (drop charSize b) (s ++ [bitsToChar $ take charSize b])
+
+bitstreamToByteString :: [Bit] -> BS.ByteString
+bitstreamToByteString bits = bsts (extendToMultipleOfCharSize bits) []
+  where bsts [] ws = BS.pack ws
+        bsts b s = bsts (drop charSize b) (s ++ [bitsToWord $ take charSize b])
