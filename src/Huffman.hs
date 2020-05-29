@@ -116,3 +116,11 @@ bitstreamToByteString :: [Bit] -> BS.ByteString
 bitstreamToByteString bits = bsts (extendToMultipleOfCharSize bits) []
   where bsts [] ws = BS.pack ws
         bsts b s = bsts (drop charSize b) (s ++ [bitsToWord $ take charSize b])
+
+encode :: String -> IO ()
+encode file = do
+    text <- readFile file
+    let tree = makeTree $ getFreqList text
+    let encoded = bitstreamToByteString $ getBits tree text
+    writeFile (file ++ ".tree") (show tree)
+    BS.writeFile (file ++ ".out") encoded
