@@ -29,6 +29,12 @@ extension.
 The decompressed file is stored in a file with the same name as the compressed one
 with the `.out` extension.
 
+Additionally, the project contains the executable `tests`. It can be run with `stack exec tests`.
+The executable encodes the file `tests/example.txt` and decodes the file `tests/example.bin`
+with the tree `example.bin`. The files are actually images of each other, so the correctness
+of the program can be seen by checking that the text file (binary file) is equal to the
+decoded binary (encoded text) file.
+
 ## Limitations
 
 Only files that fit in the memory can be compressed or decompressed.
@@ -42,8 +48,8 @@ to write entire bytes. The added zeros can encode a path to a character.
 
 To set up the module locally, navigate to the project directory and run the following commands:
 
-`stack setup`
-`stack build`
+    stack setup
+    stack build
 
 Run ghci with `stack ghci`. This enables the module to be imported.
 
