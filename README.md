@@ -29,15 +29,18 @@ extension.
 The decompressed file is stored in a file with the same name as the compressed one
 with the `.out` extension.
 
-Additionally, the project contains the executable `tests`. It can be run with `stack exec tests`.
+Additionally, the project contains the executable `tests`. It can be run from command line with `stack exec tests`.
 The executable encodes the file `tests/example.txt` and decodes the file `tests/example.bin`
-with the tree `example.bin`. The files are actually images of each other, so the correctness
-of the program can be seen by checking that the text file (binary file) is equal to the
+with the tree `example.bin`. The resulting files will be store in the `tests` directory with the
+appropriate file name. The files are actually images of each other, so the correctness
+of the program can be verified by checking that the text file (binary file) is equal to the
 decoded binary (encoded text) file.
 
 ## Limitations
 
 Only files that fit in the memory can be compressed or decompressed.
+
+The module only works for files that contain ASCII characters.
 
 Due to the way the algorithm works, the decompressed file may have extra characters
 at the end that were not in the original file. This is caused by the fact that trailing
